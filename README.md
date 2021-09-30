@@ -12,3 +12,63 @@ Project Requirements:
 - This project should be able to be runnable locally within a docker container and some simple instructions
 - This project's documentation should include build and deploy instruction
 - Tests should be provided and able to be executed locally or within a test environment.
+
+### Running Locally:
+#### Set up virtual env
+Create the virtual environment
+```
+python3 -m venv path/to/venv
+```
+
+Activate the venv
+
+Windows (Command Prompt):
+``` 
+path\to\venv\Scripts\activate.bat (cmd)
+
+path\to\venv\Scripts\Activate.ps1 (PowerShell)
+```
+
+Mac/Linux
+```
+source /path/to/venv/bin/activate
+```
+
+#### Install packages
+```
+pip install -r requirements.txt
+```
+
+#### Run 
+Windows:
+
+In a terminal window, run the following from the root dir of the project
+```
+ops\postgres.bat
+flask run
+```
+
+Mac/Linux:
+
+In a terminal window, run the following from the root dir of the project
+```
+ops/postgres.sh
+flask run
+```
+
+### Running in Docker:
+Windows:
+
+In a terminal window, run the following from the root dir of the project
+```
+docker-compose -f ops\docker-compose.yml build
+docker-compose -f ops\docker-compose.yml up
+``` 
+
+Mac/Linux:
+
+In a terminal window, run the following from the root dir of the project
+```
+docker-compose -f ops/docker-compose.yml build
+docker-compose -f ops/docker-compose.yml up
+```

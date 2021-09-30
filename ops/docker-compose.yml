@@ -16,11 +16,17 @@ services:
     environment:
       - FLASK_HOST=127.0.0.1
       - FLASK_PORT=5000
-      - FLASK_APP=api
+      - FLASK_APP=src/api
       - FLASK_ENV=development
+      - POSTGRES_USER=short
+      - POSTGRES_PASSWORD=UrlSh0rtn3r
+      - POSTGRES_DB=url_shortner
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
     build:
-      context: .
-      dockerfile: api.docker
+      context: ..
+      network: host
+      dockerfile: ops/api.docker
     ports:
       - 5000:5000
     links:

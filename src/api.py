@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request, jsonify, Response
+from flask_migrate import Migrate
 import shortuuid
 import os
+
+from models import db, ShortURL
 
 FLASK_HOST = os.getenv('FLASK_HOST')
 FLASK_PORT = os.getenv('FLASK_PORT')
@@ -15,19 +17,9 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
-
-class ShortURL(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    URL = db.Column(db.String(80), unique=True, nullable=False)
-    shortLink = db.Column(db.String, nullable=False)
-    expirationDate = db.Column(db.DateTime, nullable=True)
-    usageCount = db.Column(db.Integer, nullable=False, default=0)
-
-    def __repr__(self):
-        return '<ShortURL %r>' % self.URL
-
+db.init_app(app)
+migrate = Migrate(app, db)
 
 if __name__ == '__main__':
     app.run(host=FLASK_HOST, port=FLASK_PORT)
@@ -52,21 +44,32 @@ def generateShortLink():
 
     Returns
     -------
-    link: `string`
+    response: `Response`
         The generated shortlink for the provided url
     """
-    url = request.args.get('url')
-    expiration = request.args.get('expiration') if request.args.get('expiration') else None
-    link = shortuuid.uuid()
+    data = request.get_json()
+    print(data)
+    # Send 400 if url is not provided
+    if 'url' not in data:
+        return jsonify('Missing required field \'url\' in request body'), 400
+    url = data['url']
+
+    if 'expiration' in data:
+        expirationDate = data['expiration']
+    else:
+        expirationDate = None
+
+    shortLink = shortuuid.uuid()
+
     entry = ShortURL(
         URL=url,
-        link=link,
-        expiration=expiration
+        shortLink=shortLink,
+        expirationDate=expirationDate
     )
     db.session.add(entry)
     db.session.commit()
     print(entry)
-    return jsonify(entry)
+    return jsonify(entry), 201
 
 
 @app.route('/<shortLink>}', methods=['GET'])
@@ -86,8 +89,16 @@ def findURL(shortLink):
         Returns "SHORTLINK EXPIRED" if the provided url does not exist
     """
     entry = ShortURL.query.filter_by(shortLink=shortLink).first()
+    # Send 400 if shortLink is not found
+    if not entry:
+        return jsonify('shortLink not found'), 400
+
+    # Update the usageCount
+    entry.usageCount += 1;
+    db.session.add(entry)
+    db.session.commit()
     print(entry)
-    return jsonify(entry.URL)
+    return jsonify(entry.URL), 201
 
 
 @app.route('/deleteURL', methods=['DELETE'])
@@ -104,12 +115,22 @@ def deleteURL():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    url = request.args.get('url')
-    entry = ShortURL(URL=url)
+    data = request.get_json()
+    print(data)
+    # Send 400 if url is not provided
+    if 'url' not in data:
+        return jsonify('Missing required field \'url\' in request body'), 400
+    url = data['url']
+
+    entry = ShortURL.query.filter_by(URL=url).one()
+    # Send 400 if shortLink is not found
+    if not entry:
+        return jsonify('shortLink not found for url'), 400
+
     db.session.delete(entry)
     db.session.commit()
     print(entry)
-    return jsonify(entry)
+    return jsonify("Delete Successful"), 200
 
 
 @app.route('/analytics', methods=['GET'])
@@ -124,7 +145,8 @@ def getAnalytics():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    return True
+    usageData = ShortURL.query.order_by(ShortURL.usageCount).all()
+    return jsonify(usageData), 200
 
 
 @app.route('/usage', methods=['GET'])

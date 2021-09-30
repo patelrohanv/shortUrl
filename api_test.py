@@ -1,5 +1,5 @@
 import unittest
-import api
+from src import api
 
 
 class MyTestCase(unittest.TestCase):
