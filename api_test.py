@@ -1,5 +1,5 @@
 import unittest
-from src import routes
+from app import routes
 
 
 class MyTestCase(unittest.TestCase):

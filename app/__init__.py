@@ -19,4 +19,10 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.create_all()
 
+
+@app.before_first_request
+def initialize_database():
+    db.create_all()
+
+
 app.run(host=FLASK_HOST, port=FLASK_PORT)
