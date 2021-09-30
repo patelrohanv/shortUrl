@@ -1,10 +1,10 @@
 import unittest
-from src import api
+from src import routes
 
 
 class MyTestCase(unittest.TestCase):
     def testhasActiveAccount(self):
-        result = api.ping()
+        result = routes.ping()
         expected = "<p>Ping!</p>"
         self.assertEqual(result, expected)
 

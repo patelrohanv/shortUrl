@@ -16,7 +16,7 @@ services:
     environment:
       - FLASK_HOST=127.0.0.1
       - FLASK_PORT=5000
-      - FLASK_APP=src/api
+      - FLASK_APP=shortner
       - FLASK_ENV=development
       - POSTGRES_USER=short
       - POSTGRES_PASSWORD=UrlSh0rtn3r

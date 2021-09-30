@@ -1,30 +1,8 @@
-from flask import Flask, request, jsonify, Response
-from flask_migrate import Migrate
+from src import app, db
+from src.models import ShortURL
+
+from flask import request, jsonify
 import shortuuid
-import os
-
-from models import db, ShortURL
-
-FLASK_HOST = os.getenv('FLASK_HOST')
-FLASK_PORT = os.getenv('FLASK_PORT')
-
-POSTGRES_USER = os.getenv('POSTGRES_USER')
-POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
-POSTGRES_HOST = os.getenv('POSTGRES_HOST')
-POSTGRES_PORT = os.getenv('POSTGRES_PORT')
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-    f'postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db.init_app(app)
-migrate = Migrate(app, db)
-
-if __name__ == '__main__':
-    app.run(host=FLASK_HOST, port=FLASK_PORT)
-    db.create_all()
-
 
 @app.route("/ping")
 def ping():

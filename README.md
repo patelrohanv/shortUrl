@@ -13,14 +13,14 @@ Project Requirements:
 - This project's documentation should include build and deploy instruction
 - Tests should be provided and able to be executed locally or within a test environment.
 
-### Running Locally:
-#### Set up virtual env
+## Running Locally
+### Set up virtual env
 Create the virtual environment
 ```
 python3 -m venv path/to/venv
 ```
 
-Activate the venv
+### Activate the venv
 
 Windows (Command Prompt):
 ``` 
@@ -34,12 +34,12 @@ Mac/Linux
 source /path/to/venv/bin/activate
 ```
 
-#### Install packages
+### Install packages
 ```
 pip install -r requirements.txt
 ```
 
-#### Run 
+### Run 
 Windows:
 
 In a terminal window, run the following from the root dir of the project
@@ -56,7 +56,7 @@ ops/postgres.sh
 flask run
 ```
 
-### Running in Docker:
+## Running in Docker
 Windows:
 
 In a terminal window, run the following from the root dir of the project
