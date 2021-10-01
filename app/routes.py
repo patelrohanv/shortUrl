@@ -3,6 +3,7 @@ from app.models import ShortURL
 
 from flask import request, jsonify
 from sqlalchemy.exc import IntegrityError, NoResultFound
+from datetime import datetime
 import shortuuid
 import os
 
@@ -32,7 +33,6 @@ def generateShortLink():
         The generated shortlink for the provided url
     """
     data = request.get_json()
-    print(data)
     # Send 400 if url is not provided
     if 'url' not in data:
         return jsonify('Missing required field \'url\' in request body'), 400
@@ -53,8 +53,8 @@ def generateShortLink():
         )
         db.session.add(entry)
         db.session.commit()
-        print(entry)
-        return jsonify(entry), 201
+        ret = entry.serialize()
+        return jsonify(ret), 200
     except IntegrityError:
         return jsonify('Cannot create duplicate url shortLinks'), 400
 
@@ -82,10 +82,11 @@ def findURL(shortLink):
 
     # Update the usageCount
     entry.usageCount += 1;
+    entry.lastUsed = datetime.now()
     db.session.add(entry)
     db.session.commit()
-    print(entry)
-    return jsonify(entry.serialize()), 201
+    ret = entry.serialize()
+    return jsonify(ret), 200
 
 
 @app.route('/deleteURL', methods=['DELETE'])
@@ -103,7 +104,6 @@ def deleteURL():
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
     data = request.get_json()
-    print(data)
     # Send 400 if url is not provided
     if 'url' not in data:
         return jsonify('Missing required field \'url\' in request body'), 400
@@ -113,7 +113,6 @@ def deleteURL():
         entry = ShortURL.query.filter_by(URL=url).one()
         db.session.delete(entry)
         db.session.commit()
-        print(entry)
         return jsonify("Delete Successful"), 200
     except NoResultFound:
         return jsonify('shortLink not found for url'), 400
@@ -131,12 +130,9 @@ def getAnalytics():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    usageDataRaw = ShortURL.query.order_by(ShortURL.usageCount).all()
-    usageData = []
-    for ud in usageDataRaw:
-        formatted = ud.serialize()
-        usageData.append(formatted)
-    return jsonify(usageData), 200
+    usageData = ShortURL.query.order_by(ShortURL.usageCount.desc()).all()
+    ret = ShortURL.serializeList(usageData)
+    return jsonify(ret), 200
 
 
 @app.route('/usage', methods=['GET'])
@@ -151,9 +147,6 @@ def getUsage():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    lastUsedDataRaw = ShortURL.query.order_by(ShortURL.lastUsed).all()
-    lastUsedData = []
-    for ud in lastUsedDataRaw:
-        formatted = ud.serialize()
-        lastUsedData.append(formatted)
-    return jsonify(lastUsedData), 200
+    lastUsedData = ShortURL.query.order_by(ShortURL.lastUsed.desc()).all()
+    ret = ShortURL.serializeList(lastUsedData)
+    return jsonify(ret), 200

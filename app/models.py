@@ -17,14 +17,22 @@ class ShortURL(db.Model):
         self.expirationDate = expirationDate
 
     def serialize(self):
-        return {"id": self.id,
-                "url": self.URL,
-                "shortLink": self.shortLink,
-                "expirationDate": self.expirationDate,
-                "usageCount": self.usageCount,
-                "lastUsed": self.lastUsed
-                }
+        return {
+            "id": self.id,
+            "url": self.URL,
+            "shortLink": self.shortLink,
+            "expirationDate": self.expirationDate,
+            "usageCount": self.usageCount,
+            "lastUsed": self.lastUsed
+        }
+
+    @staticmethod
+    def serializeList(shorturls):
+        serialized = []
+        for ud in shorturls:
+            formatted = ud.serialize()
+            serialized.append(formatted)
+        return serialized
 
     def __repr__(self):
         return f'<ShortURL {self.id} {self.URL} {self.shortLink} {self.expirationDate} {self.usageCount}>'
-
