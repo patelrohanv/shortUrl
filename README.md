@@ -72,3 +72,169 @@ In a terminal window, run the following from the root dir of the project
 docker-compose -f ops/docker-compose.yml build
 docker-compose -f ops/docker-compose.yml up
 ```
+
+## Endpoints
+
+### `POST` /generateShortLink
+Sample Input:
+```
+{
+    "url": "patelrohanv.com"
+    (optional) "expirationDate": "10/1/2021"
+}
+```
+Sample Output:
+```
+{
+  "expirationDate": "Fri, 01 Oct 2021 00:00:00 GMT",
+  "id": 3,
+  "lastUsed": null,
+  "shortLink": "EvrNvFxojpyVe4dvXyNxMv",
+  "url": "patelrohanv.com",
+  "usageCount": 0
+}
+```
+or
+``` 
+"Key patelrohanv.com already exists"
+```
+or
+``` 
+"time data '1-1-2002' does not match format '%m/%d/%Y'"
+```
+or
+``` 
+"Missing required field 'url' in request body"
+```
+### `Get` /{shortLink}
+
+Sample Output:
+```
+{
+  "expirationDate": "Sun, 03 Oct 2021 00:00:00 GMT",
+  "id": 4,
+  "lastUsed": "Sat, 02 Oct 2021 16:10:04 GMT",
+  "shortLink": "VuAgLPv8nhfD4qMdjFJdmu",
+  "url": "patelrohanv.com",
+  "usageCount": 1
+}
+```
+or
+```
+"shortLink expired; please recreate"
+```
+or
+```
+"shortLink not found"
+```
+### `DELETE` /delete/url
+Sample Input:
+```
+{ 
+    "url": "patelrohanv.com" 
+}
+```
+Sample Output:
+```
+"Delete Successful"
+```
+or
+``` 
+"url not found"
+```
+or
+```
+"Missing required field 'url' in request body"
+```
+
+### `DELETE` /delete/shortLink
+Sample Input:
+```
+{
+    "shortLink": "VuAgLPv8nhfD4qMdjFJdmu" 
+}
+```
+Sample Output:
+```
+"Delete Successful"
+```
+or
+``` 
+"shortLink not found"
+```
+or
+``` 
+"Missing required field 'shortLink' in request body"
+```
+
+### `DELETE` /delete/expired
+Sample Output:
+```
+{
+
+}
+```
+
+
+### `GET` /analytics/popular
+Sample Output:
+```
+[
+  {
+    "expirationDate": null,
+    "id": 15,
+    "lastUsed": "Sat, 02 Oct 2021 16:26:16 GMT",
+    "shortLink": "kYNA65Gvnap2kBszMuemhM",
+    "url": "https://www.linkedin.com/in/patelrohanv/",
+    "usageCount": 38
+  },
+  {
+    "expirationDate": null,
+    "id": 14,
+    "lastUsed": "Sat, 02 Oct 2021 16:26:55 GMT",
+    "shortLink": "8MMVtGrSPYAQTcxdK9Apzf",
+    "url": "github.com/patelrohanv/",
+    "usageCount": 28
+  },
+  {
+    "expirationDate": "Sun, 03 Oct 2021 00:00:00 GMT",
+    "id": 5,
+    "lastUsed": "Sat, 02 Oct 2021 16:36:40 GMT",
+    "shortLink": "mRvFdLYVHuoxbEZRiZyCd4",
+    "url": "patelrohanv.com",
+    "usageCount": 12
+  }
+]
+```
+
+
+### `GET` /analytics/recent
+Sample Output:
+```
+[
+  {
+    "expirationDate": "Sun, 03 Oct 2021 00:00:00 GMT",
+    "id": 5,
+    "lastUsed": "Sat, 02 Oct 2021 16:36:40 GMT",
+    "shortLink": "mRvFdLYVHuoxbEZRiZyCd4",
+    "url": "patelrohanv.com",
+    "usageCount": 12
+  },
+  {
+    "expirationDate": null,
+    "id": 14,
+    "lastUsed": "Sat, 02 Oct 2021 16:26:55 GMT",
+    "shortLink": "8MMVtGrSPYAQTcxdK9Apzf",
+    "url": "github.com/patelrohanv/",
+    "usageCount": 28
+  },
+  {
+    "expirationDate": null,
+    "id": 15,
+    "lastUsed": "Sat, 02 Oct 2021 16:26:16 GMT",
+    "shortLink": "kYNA65Gvnap2kBszMuemhM",
+    "url": "https://www.linkedin.com/in/patelrohanv/",
+    "usageCount": 38
+  }
+]
+```

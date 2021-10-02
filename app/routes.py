@@ -38,8 +38,12 @@ def generateShortLink():
         return jsonify('Missing required field \'url\' in request body'), 400
     url = data['url']
 
-    if 'expiration' in data:
-        expirationDate = data['expiration']
+    if 'expirationDate' in data:
+        try:
+            expirationDate = datetime.strptime(data['expirationDate'], "%m/%d/%Y")
+        except ValueError as ve:
+            app.logger.info(ve)
+            return jsonify(str(ve)), 400
     else:
         expirationDate = None
 
@@ -55,12 +59,13 @@ def generateShortLink():
         db.session.commit()
         ret = entry.serialize()
         return jsonify(ret), 200
-    except IntegrityError:
-        return jsonify('Cannot create duplicate url shortLinks'), 400
+    except IntegrityError as ie:
+        app.logger.info(ie)
+        return jsonify(f'Key {url} already exists'), 400
 
 
 @app.route('/<shortLink>', methods=['GET'])
-def findURL(shortLink):
+def findURLFromShortLink(shortLink):
     """Find a shortlink for a url
 
     Parameters
@@ -80,7 +85,13 @@ def findURL(shortLink):
     if not entry:
         return jsonify('shortLink not found'), 400
 
-    # Update the usageCount
+    if entry.expirationDate is not None:
+        if entry.expirationDate < datetime.now():
+            db.session.delete(entry)
+            db.session.commit()
+            return jsonify('shortLink expired; please recreate'), 400
+
+    # Update the usageCount and lastUsed
     entry.usageCount += 1;
     entry.lastUsed = datetime.now()
     db.session.add(entry)
@@ -89,7 +100,7 @@ def findURL(shortLink):
     return jsonify(ret), 200
 
 
-@app.route('/deleteURL', methods=['DELETE'])
+@app.route('/delete/url', methods=['DELETE'])
 def deleteURL():
     """Delete a URL
 
@@ -114,12 +125,68 @@ def deleteURL():
         db.session.delete(entry)
         db.session.commit()
         return jsonify("Delete Successful"), 200
-    except NoResultFound:
-        return jsonify('shortLink not found for url'), 400
+    except NoResultFound as nrf:
+        app.logger.info(nrf)
+        return jsonify("url not found"), 400
 
 
-@app.route('/analytics', methods=['GET'])
-def getAnalytics():
+@app.route('/delete/shortLink', methods=['DELETE'])
+def deleteShortLink():
+    """Delete a URL
+
+    Parameters
+    ----------
+    url: `string`
+        The URL whose entry to delete
+
+    Returns
+    -------
+    result: `string`
+        The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
+    """
+    data = request.get_json()
+    # Send 400 if url is not provided
+    if 'shortLink' not in data:
+        return jsonify('Missing required field \'shortLink\' in request body'), 400
+    shortLink = data['shortLink']
+
+    try:
+        entry = ShortURL.query.filter_by(shortLink=shortLink).one()
+        db.session.delete(entry)
+        db.session.commit()
+        return jsonify("Delete Successful"), 200
+    except NoResultFound as nrf:
+        app.logger.info(nrf)
+        return jsonify("shortLink not found"), 400
+
+
+@app.route('/delete/expired', methods=['DELETE'])
+def deleteExpired():
+    """Delete a URL
+
+    Parameters
+    ----------
+    url: `string`
+        The URL whose entry to delete
+
+    Returns
+    -------
+    result: `string`
+        The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
+    """
+
+    try:
+        entry = ShortURL.query.filter(ShortURL.expirationDate <= datetime.now())
+        db.session.delete(entry)
+        db.session.commit()
+        return jsonify("Delete Successful"), 200
+    except NoResultFound as nrf:
+        app.logger.info(nrf)
+        return jsonify('No Expired Links Found'), 400
+
+
+@app.route('/analytics/popular', methods=['GET'])
+def getPopular():
     """Get a list of URLs and their usage count in descending order
 
     Parameters
@@ -135,8 +202,8 @@ def getAnalytics():
     return jsonify(ret), 200
 
 
-@app.route('/usage', methods=['GET'])
-def getUsage():
+@app.route('/analytics/recent', methods=['GET'])
+def getRecent():
     """Get a list of URLs and their usage count, and last clicked date
 
     Parameters
