@@ -13,7 +13,7 @@ Project Requirements:
 - This project's documentation should include build and deploy instruction
 - Tests should be provided and able to be executed locally or within a test environment.
 
-## Running Locally
+## Running API Locally
 ### Set up virtual env
 Create the virtual environment
 ```
@@ -56,7 +56,7 @@ ops/postgres.sh
 flask run
 ```
 
-## Running in Docker
+## Running API in Docker
 Windows:
 
 In a terminal window, run the following from the root dir of the project
@@ -73,13 +73,17 @@ docker-compose -f ops/docker-compose.yml build
 docker-compose -f ops/docker-compose.yml up
 ```
 
+## Running tests locally
+
+## Running tests in Docker
+
 ## Endpoints
 
 ### `POST` /generateShortLink
 Sample Input:
 ```
 {
-    "url": "patelrohanv.com"
+    "url": "patelrohanv.com",
     (optional) "expirationDate": "10/1/2021"
 }
 ```
