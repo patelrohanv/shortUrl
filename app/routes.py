@@ -5,10 +5,6 @@ from flask import request, jsonify
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from datetime import datetime
 import shortuuid
-import os
-
-FLASK_HOST = os.getenv('FLASK_HOST')
-FLASK_PORT = os.getenv('FLASK_PORT')
 
 
 @app.route("/ping")
