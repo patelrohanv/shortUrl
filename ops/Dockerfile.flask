@@ -1,3 +1,5 @@
+# build from project root 'docker build -t shortner -f ops\Dockerfile.flask .'
+# run from project root 'docker run shortner'
 FROM python:3.8-slim-buster
 
 ENV FLASK_HOST=$FLASK_HOST
@@ -6,9 +8,10 @@ ENV FLASK_APP=$FLASK_APP
 ENV FLASK_ENV=$FLASK_ENV
 
 WORKDIR ../app
-COPY requirements.txt requirements.txt
+COPY ../requirements.txt requirements.txt
 
 RUN python -m pip install --upgrade pip
+RUN pip3 install psycopg2-binary # needed to download psycopg2
 RUN pip3 install -r requirements.txt
 COPY . .
 EXPOSE $FLASK_PORT

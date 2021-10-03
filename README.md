@@ -14,13 +14,14 @@ Project Requirements:
 - Tests should be provided and able to be executed locally or within a test environment.
 
 ## Running API Locally
+
 ### Set up virtual env
 Create the virtual environment
 ```
 python3 -m venv path/to/venv
 ```
 
-### Activate the venv
+#### Activate the venv
 
 Windows (Command Prompt):
 ``` 
@@ -34,12 +35,12 @@ Mac/Linux
 source /path/to/venv/bin/activate
 ```
 
-### Install packages
+#### Install packages
 ```
 pip install -r requirements.txt
 ```
 
-### Run 
+### Run App in Python
 Windows:
 
 In a terminal window, run the following from the root dir of the project
@@ -61,6 +62,25 @@ Windows:
 
 In a terminal window, run the following from the root dir of the project
 ```
+ops\postgres.bat
+docker build -t shortner -f ops\Dockerfile.flask .
+docker run shortner
+``` 
+
+Mac/Linux:
+
+In a terminal window, run the following from the root dir of the project
+```
+ops/postgres.sh
+docker build -t shortner -f ops/Dockerfile.flask .
+docker run shortner
+```
+
+## Running API using Docker Compose
+Windows:
+
+In a terminal window, run the following from the root dir of the project
+```
 docker-compose -f ops\docker-compose.yml build
 docker-compose -f ops\docker-compose.yml up
 ``` 
@@ -74,6 +94,10 @@ docker-compose -f ops/docker-compose.yml up
 ```
 
 ## Running tests locally
+In a terminal window, run the following from the root dir of the project (venv must be activated)
+```
+pytest test
+```
 
 ## Running tests in Docker
 
