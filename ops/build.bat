@@ -1,1 +1,1 @@
- docker build -t shortner .
+ docker build -t shortner ./ops
