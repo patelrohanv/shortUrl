@@ -1,13 +1,15 @@
-FROM python:3
+FROM python:3.8-slim-buster
 
 ENV FLASK_HOST=$FLASK_HOST
 ENV FLASK_PORT=$FLASK_PORT
 ENV FLASK_APP=$FLASK_APP
 ENV FLASK_ENV=$FLASK_ENV
 
+WORKDIR ../app
+COPY requirements.txt requirements.txt
+
 RUN python -m pip install --upgrade pip
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install -r requirements.txt
 COPY . .
 EXPOSE $FLASK_PORT
 CMD [ "flask", "run" ]

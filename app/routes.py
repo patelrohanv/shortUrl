@@ -175,14 +175,32 @@ def deleteExpired():
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
 
-    try:
-        entry = ShortURL.query.filter(ShortURL.expirationDate <= datetime.now())
-        db.session.delete(entry)
-        db.session.commit()
-        return jsonify("Delete Successful"), 200
-    except NoResultFound as nrf:
-        app.logger.info(nrf)
-        return jsonify('No Expired Links Found'), 400
+    # TODO find a cleaner way to do this without looping
+    entries = ShortURL.query.all()
+    for entry in entries:
+        if entry.expirationDate is None:
+            continue
+        if entry.expirationDate <= datetime.now():
+            db.session.delete(entry)
+            db.session.commit()
+    return jsonify("Delete Successful"), 200
+
+
+@app.route('/analytics/', methods=['GET'])
+def getAll():
+    """Get a list of URLs and their usage count in descending order
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    result: `string`
+        The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
+    """
+    all = ShortURL.query.all()
+    ret = ShortURL.serializeList(all)
+    return jsonify(ret), 200
 
 
 @app.route('/analytics/popular', methods=['GET'])
@@ -198,7 +216,9 @@ def getPopular():
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
     usageData = ShortURL.query.order_by(ShortURL.usageCount.desc()).all()
-    ret = ShortURL.serializeList(usageData)
+    ret = []
+    for ud in usageData:
+        ret.append({"url": ud.URL, "shortLink": ud.shortLink, "usageCount": ud.usageCount})
     return jsonify(ret), 200
 
 
@@ -214,6 +234,9 @@ def getRecent():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    lastUsedData = ShortURL.query.order_by(ShortURL.lastUsed.desc()).all()
-    ret = ShortURL.serializeList(lastUsedData)
+    usageData = ShortURL.query.order_by(ShortURL.lastUsed.desc()).all()
+    ret = []
+    for ud in usageData:
+        ret.append({"url": ud.URL, "shortLink": ud.shortLink, "lastUsed": ud.lastUsed})
     return jsonify(ret), 200
+

@@ -175,38 +175,58 @@ or
 Sample Output:
 ```
 {
-
+"Delete Successful"
 }
 ```
-
+### `GET` /analytics
+Sample Output:
+```
+[
+  {
+    "expirationDate": "Mon, 11 Oct 2021 00:00:00 GMT",
+    "id": 1,
+    "lastUsed": "Sun, 03 Oct 2021 16:13:09 GMT",
+    "shortLink": "LA4NqninbzWcN97fVonuDs",
+    "url": "patelrohanv.com",
+    "usageCount": 6
+  },
+  {
+    "expirationDate": "Mon, 13 Dec 2021 00:00:00 GMT",
+    "id": 5,
+    "lastUsed": "Sun, 03 Oct 2021 16:17:34 GMT",
+    "shortLink": "PKQNLAdcRGs9DqDjQWFNyM",
+    "url": "https://github.com/patelrohanv/",
+    "usageCount": 20
+  },
+  {
+    "expirationDate": "Fri, 12 Nov 2021 00:00:00 GMT",
+    "id": 4,
+    "lastUsed": "Sun, 03 Oct 2021 16:17:48 GMT",
+    "shortLink": "UrevR4pP2T3zJm4TyLLV22",
+    "url": "https://www.linkedin.com/in/patelrohanv/",
+    "usageCount": 9
+  }
+]
+```
 
 ### `GET` /analytics/popular
 Sample Output:
 ```
 [
   {
-    "expirationDate": null,
-    "id": 15,
-    "lastUsed": "Sat, 02 Oct 2021 16:26:16 GMT",
-    "shortLink": "kYNA65Gvnap2kBszMuemhM",
+    "shortLink": "PKQNLAdcRGs9DqDjQWFNyM",
+    "url": "https://github.com/patelrohanv/",
+    "usageCount": 20
+  },
+  {
+    "shortLink": "UrevR4pP2T3zJm4TyLLV22",
     "url": "https://www.linkedin.com/in/patelrohanv/",
-    "usageCount": 38
+    "usageCount": 9
   },
   {
-    "expirationDate": null,
-    "id": 14,
-    "lastUsed": "Sat, 02 Oct 2021 16:26:55 GMT",
-    "shortLink": "8MMVtGrSPYAQTcxdK9Apzf",
-    "url": "github.com/patelrohanv/",
-    "usageCount": 28
-  },
-  {
-    "expirationDate": "Sun, 03 Oct 2021 00:00:00 GMT",
-    "id": 5,
-    "lastUsed": "Sat, 02 Oct 2021 16:36:40 GMT",
-    "shortLink": "mRvFdLYVHuoxbEZRiZyCd4",
+    "shortLink": "LA4NqninbzWcN97fVonuDs",
     "url": "patelrohanv.com",
-    "usageCount": 12
+    "usageCount": 6
   }
 ]
 ```
@@ -217,28 +237,19 @@ Sample Output:
 ```
 [
   {
-    "expirationDate": "Sun, 03 Oct 2021 00:00:00 GMT",
-    "id": 5,
-    "lastUsed": "Sat, 02 Oct 2021 16:36:40 GMT",
-    "shortLink": "mRvFdLYVHuoxbEZRiZyCd4",
-    "url": "patelrohanv.com",
-    "usageCount": 12
+    "lastUsed": "Sun, 03 Oct 2021 16:17:48 GMT",
+    "shortLink": "UrevR4pP2T3zJm4TyLLV22",
+    "url": "https://www.linkedin.com/in/patelrohanv/"
   },
   {
-    "expirationDate": null,
-    "id": 14,
-    "lastUsed": "Sat, 02 Oct 2021 16:26:55 GMT",
-    "shortLink": "8MMVtGrSPYAQTcxdK9Apzf",
-    "url": "github.com/patelrohanv/",
-    "usageCount": 28
+    "lastUsed": "Sun, 03 Oct 2021 16:17:34 GMT",
+    "shortLink": "PKQNLAdcRGs9DqDjQWFNyM",
+    "url": "https://github.com/patelrohanv/"
   },
   {
-    "expirationDate": null,
-    "id": 15,
-    "lastUsed": "Sat, 02 Oct 2021 16:26:16 GMT",
-    "shortLink": "kYNA65Gvnap2kBszMuemhM",
-    "url": "https://www.linkedin.com/in/patelrohanv/",
-    "usageCount": 38
+    "lastUsed": "Sun, 03 Oct 2021 16:13:09 GMT",
+    "shortLink": "LA4NqninbzWcN97fVonuDs",
+    "url": "patelrohanv.com"
   }
 ]
 ```
