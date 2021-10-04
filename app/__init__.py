@@ -20,4 +20,6 @@ def initialize_database():
     db.create_all()
 
 
-app.run(host=fc.getHost(), port=fc.getPort())
+host = fc.getHost()
+port = fc.getPort()
+app.run(host=host, port=port)

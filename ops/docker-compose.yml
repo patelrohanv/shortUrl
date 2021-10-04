@@ -10,8 +10,8 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
     image: postgres:latest
     ports:
-      - 5432:5432
-    network_mode: "host"
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+
   api:
     container_name: shortUrl-web
     environment:
@@ -27,9 +27,8 @@ services:
     build:
       context: ..
       network: host
-      dockerfile: Dockerfile.flask
+      dockerfile: ops\Dockerfile.flask
     ports:
-      - 5000:5000
+      - ${FLASK_PORT}:${FLASK_PORT}
     links:
       - "db:${POSTGRES_HOST}"
-    network_mode: "host"
