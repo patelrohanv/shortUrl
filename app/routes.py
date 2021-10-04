@@ -211,7 +211,7 @@ def get_popular():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    data = ShortURL.query.order_by(ShortURL.usageCount.desc()).all()
+    data = ShortURL.query.order_by(ShortURL.usage_count.desc()).all()
     ret = []
     for d in data:
         ret.append({"url": d.url, "short_link": d.short_link, "usage_count": d.usage_count})

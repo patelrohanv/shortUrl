@@ -126,18 +126,18 @@ Sample Input:
 ```
 {
     "url": "patelrohanv.com",
-    (optional) "expirationDate": "10/1/2021"
+    (optional) "expiration_date": "10/1/2021"
 }
 ```
 Sample Output:
 ```
 {
-  "expirationDate": "Fri, 01 Oct 2021 00:00:00 GMT",
-  "id": 3,
-  "lastUsed": null,
-  "shortLink": "EvrNvFxojpyVe4dvXyNxMv",
+  "expiration_date": "Mon, 11 Oct 2021 00:00:00 GMT",
+  "id": 6,
+  "last_used": null,
+  "short_link": "iP7FRfML22KFxoUZYFLTRq",
   "url": "patelrohanv.com",
-  "usageCount": 0
+  "usage_count": 0
 }
 ```
 or
@@ -157,21 +157,21 @@ or
 Sample Output:
 ```
 {
-  "expirationDate": "Sun, 03 Oct 2021 00:00:00 GMT",
-  "id": 4,
-  "lastUsed": "Sat, 02 Oct 2021 16:10:04 GMT",
-  "shortLink": "VuAgLPv8nhfD4qMdjFJdmu",
+  "expiration_date": "Mon, 11 Oct 2021 00:00:00 GMT",
+  "id": 6,
+  "last_used": "Sun, 03 Oct 2021 21:52:10 GMT",
+  "short_link": "iP7FRfML22KFxoUZYFLTRq",
   "url": "patelrohanv.com",
-  "usageCount": 1
+  "usage_count": 1
 }
 ```
 or
 ```
-"shortLink expired; please recreate"
+"short_link expired; please recreate"
 ```
 or
 ```
-"shortLink not found"
+"short_link not found"
 ```
 ### `DELETE` /delete/url
 Sample Input:
@@ -197,7 +197,7 @@ or
 Sample Input:
 ```
 {
-    "shortLink": "VuAgLPv8nhfD4qMdjFJdmu" 
+    "short_link": "VuAgLPv8nhfD4qMdjFJdmu" 
 }
 ```
 Sample Output:
@@ -206,7 +206,7 @@ Sample Output:
 ```
 or
 ``` 
-"shortLink not found"
+"short_link not found"
 ```
 or
 ``` 
@@ -225,28 +225,28 @@ Sample Output:
 ```
 [
   {
-    "expirationDate": "Mon, 11 Oct 2021 00:00:00 GMT",
-    "id": 1,
-    "lastUsed": "Sun, 03 Oct 2021 16:13:09 GMT",
-    "shortLink": "LA4NqninbzWcN97fVonuDs",
-    "url": "patelrohanv.com",
-    "usageCount": 6
-  },
-  {
-    "expirationDate": "Mon, 13 Dec 2021 00:00:00 GMT",
-    "id": 5,
-    "lastUsed": "Sun, 03 Oct 2021 16:17:34 GMT",
-    "shortLink": "PKQNLAdcRGs9DqDjQWFNyM",
+    "expiration_date": "Wed, 13 Oct 2021 00:00:00 GMT",
+    "id": 8,
+    "last_used": "Sun, 03 Oct 2021 21:53:31 GMT",
+    "short_link": "LjQPyyeoerC56CZ4cLPCGQ",
     "url": "https://github.com/patelrohanv/",
-    "usageCount": 20
+    "usage_count": 9
   },
   {
-    "expirationDate": "Fri, 12 Nov 2021 00:00:00 GMT",
-    "id": 4,
-    "lastUsed": "Sun, 03 Oct 2021 16:17:48 GMT",
-    "shortLink": "UrevR4pP2T3zJm4TyLLV22",
-    "url": "https://www.linkedin.com/in/patelrohanv/",
-    "usageCount": 9
+    "expiration_date": "Mon, 11 Oct 2021 00:00:00 GMT",
+    "id": 6,
+    "last_used": "Sun, 03 Oct 2021 21:53:56 GMT",
+    "short_link": "iP7FRfML22KFxoUZYFLTRq",
+    "url": "patelrohanv.com",
+    "usage_count": 5
+  },
+  {
+    "expiration_date": "Mon, 11 Oct 2021 00:00:00 GMT",
+    "id": 7,
+    "last_used": "Sun, 03 Oct 2021 21:54:11 GMT",
+    "short_link": "HB9MXLwUwevHgro4EMHoRB",
+    "url": "https://www.linkedin.com/in/patelrohanv",
+    "usage_count": 3
   }
 ]
 ```
@@ -256,19 +256,19 @@ Sample Output:
 ```
 [
   {
-    "shortLink": "PKQNLAdcRGs9DqDjQWFNyM",
+    "short_link": "LjQPyyeoerC56CZ4cLPCGQ",
     "url": "https://github.com/patelrohanv/",
-    "usageCount": 20
+    "usage_count": 9
   },
   {
-    "shortLink": "UrevR4pP2T3zJm4TyLLV22",
-    "url": "https://www.linkedin.com/in/patelrohanv/",
-    "usageCount": 9
-  },
-  {
-    "shortLink": "LA4NqninbzWcN97fVonuDs",
+    "short_link": "iP7FRfML22KFxoUZYFLTRq",
     "url": "patelrohanv.com",
-    "usageCount": 6
+    "usage_count": 5
+  },
+  {
+    "short_link": "HB9MXLwUwevHgro4EMHoRB",
+    "url": "https://www.linkedin.com/in/patelrohanv",
+    "usage_count": 3
   }
 ]
 ```
@@ -279,19 +279,19 @@ Sample Output:
 ```
 [
   {
-    "lastUsed": "Sun, 03 Oct 2021 16:17:48 GMT",
-    "shortLink": "UrevR4pP2T3zJm4TyLLV22",
-    "url": "https://www.linkedin.com/in/patelrohanv/"
+    "last_used": "Sun, 03 Oct 2021 21:54:11 GMT",
+    "short_link": "HB9MXLwUwevHgro4EMHoRB",
+    "url": "https://www.linkedin.com/in/patelrohanv"
   },
   {
-    "lastUsed": "Sun, 03 Oct 2021 16:17:34 GMT",
-    "shortLink": "PKQNLAdcRGs9DqDjQWFNyM",
-    "url": "https://github.com/patelrohanv/"
-  },
-  {
-    "lastUsed": "Sun, 03 Oct 2021 16:13:09 GMT",
-    "shortLink": "LA4NqninbzWcN97fVonuDs",
+    "last_used": "Sun, 03 Oct 2021 21:53:56 GMT",
+    "short_link": "iP7FRfML22KFxoUZYFLTRq",
     "url": "patelrohanv.com"
+  },
+  {
+    "last_used": "Sun, 03 Oct 2021 21:53:31 GMT",
+    "short_link": "LjQPyyeoerC56CZ4cLPCGQ",
+    "url": "https://github.com/patelrohanv/"
   }
 ]
 ```
