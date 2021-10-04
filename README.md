@@ -45,7 +45,17 @@ Windows:
 
 In a terminal window, run the following from the root dir of the project
 ```
-ops\postgres.bat
+call ops\shortUrl.bat
+
+docker run --rm -d^
+ --name postgres^
+ -e POSTGRES_USER=%POSTGRES_USER%^
+ -e POSTGRES_PASSWORD=%POSTGRES_PASSWORD%^
+ -e POSTGRES_DB=%POSTGRES_DB%^
+ -e POSTGRES_PORT=%POSTGRES_PORT%^
+ -p %POSTGRES_PORT%:%POSTGRES_PORT%^
+ postgres
+ 
 flask run
 ```
 
@@ -53,7 +63,17 @@ Mac/Linux:
 
 In a terminal window, run the following from the root dir of the project
 ```
-ops/postgres.sh
+source ops/shortUrl.env
+
+docker run --rm -d \
+ --name postgres \
+ -e POSTGRES_USER=$POSTGRES_USER \
+ -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+ -e POSTGRES_DB=$POSTGRES_DB \
+ -e POSTGRES_PORT=$POSTGRES_PORT \
+ -p $POSTGRES_PORT:$POSTGRES_PORT \
+ postgres
+ 
 flask run
 ```
 
@@ -62,18 +82,14 @@ Windows:
 
 In a terminal window, run the following from the root dir of the project
 ```
-ops\postgres.bat
-docker build -t shortner -f ops\Dockerfile.flask .
-docker run shortner
+ops\runApp.sh
 ``` 
 
 Mac/Linux:
 
 In a terminal window, run the following from the root dir of the project
 ```
-ops/postgres.sh
-docker build -t shortner -f ops/Dockerfile.flask .
-docker run shortner
+ops/runApp.sh
 ```
 
 ## Running API using Docker Compose

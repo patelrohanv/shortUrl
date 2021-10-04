@@ -13,7 +13,7 @@ def ping():
 
 
 @app.route('/generateShortLink', methods=['POST'])
-def generateShortLink():
+def generate_short_link():
     """Generate a shortlink for a url
 
     Parameters
@@ -34,22 +34,22 @@ def generateShortLink():
         return jsonify('Missing required field \'url\' in request body'), 400
     url = data['url']
 
-    if 'expirationDate' in data:
+    if 'expiration_date' in data:
         try:
-            expirationDate = datetime.strptime(data['expirationDate'], "%m/%d/%Y")
+            expiration_date = datetime.strptime(data['expiration_date'], "%m/%d/%Y")
         except ValueError as ve:
             app.logger.info(ve)
             return jsonify(str(ve)), 400
     else:
-        expirationDate = None
+        expiration_date = None
 
-    shortLink = shortuuid.uuid()
+    short_link = shortuuid.uuid()
 
     try:
         entry = ShortURL(
-            URL=url,
-            shortLink=shortLink,
-            expirationDate=expirationDate
+            url=url,
+            short_link=short_link,
+            expiration_date=expiration_date
         )
         db.session.add(entry)
         db.session.commit()
@@ -60,13 +60,13 @@ def generateShortLink():
         return jsonify(f'Key {url} already exists'), 400
 
 
-@app.route('/<shortLink>', methods=['GET'])
-def findURLFromShortLink(shortLink):
+@app.route('/<short_link>', methods=['GET'])
+def find_url_from_short_link(short_link):
     """Find a shortlink for a url
 
     Parameters
     ----------
-    shortLink: `string`
+    short_link: `string`
         The shortLink whose URL to find
 
     Returns
@@ -76,20 +76,20 @@ def findURLFromShortLink(shortLink):
         Returns "NOT FOUND" if the provided url  does not exist
         Returns "SHORTLINK EXPIRED" if the provided url does not exist
     """
-    entry = ShortURL.query.filter_by(shortLink=shortLink).first()
+    entry = ShortURL.query.filter_by(short_link=short_link).one()
     # Send 400 if shortLink is not found
     if not entry:
         return jsonify('shortLink not found'), 400
 
-    if entry.expirationDate is not None:
-        if entry.expirationDate < datetime.now():
+    if entry.expiration_date is not None:
+        if entry.expiration_date < datetime.now():
             db.session.delete(entry)
             db.session.commit()
             return jsonify('shortLink expired; please recreate'), 400
 
     # Update the usageCount and lastUsed
-    entry.usageCount += 1;
-    entry.lastUsed = datetime.now()
+    entry.usage_count += 1;
+    entry.last_used = datetime.now()
     db.session.add(entry)
     db.session.commit()
     ret = entry.serialize()
@@ -97,7 +97,7 @@ def findURLFromShortLink(shortLink):
 
 
 @app.route('/delete/url', methods=['DELETE'])
-def deleteURL():
+def delete_url():
     """Delete a URL
 
     Parameters
@@ -117,7 +117,7 @@ def deleteURL():
     url = data['url']
 
     try:
-        entry = ShortURL.query.filter_by(URL=url).one()
+        entry = ShortURL.query.filter_by(url=url).one()
         db.session.delete(entry)
         db.session.commit()
         return jsonify("Delete Successful"), 200
@@ -127,7 +127,7 @@ def deleteURL():
 
 
 @app.route('/delete/shortLink', methods=['DELETE'])
-def deleteShortLink():
+def delete_short_link():
     """Delete a URL
 
     Parameters
@@ -142,12 +142,12 @@ def deleteShortLink():
     """
     data = request.get_json()
     # Send 400 if url is not provided
-    if 'shortLink' not in data:
+    if 'short_link' not in data:
         return jsonify('Missing required field \'shortLink\' in request body'), 400
-    shortLink = data['shortLink']
+    short_link = data['short_link']
 
     try:
-        entry = ShortURL.query.filter_by(shortLink=shortLink).one()
+        entry = ShortURL.query.filter_by(short_link=short_link).one()
         db.session.delete(entry)
         db.session.commit()
         return jsonify("Delete Successful"), 200
@@ -157,7 +157,7 @@ def deleteShortLink():
 
 
 @app.route('/delete/expired', methods=['DELETE'])
-def deleteExpired():
+def delete_expired():
     """Delete a URL
 
     Parameters
@@ -174,16 +174,16 @@ def deleteExpired():
     # TODO find a cleaner way to do this without looping
     entries = ShortURL.query.all()
     for entry in entries:
-        if entry.expirationDate is None:
+        if entry.expiration_date is None:
             continue
-        if entry.expirationDate <= datetime.now():
+        if entry.expiration_date <= datetime.now():
             db.session.delete(entry)
             db.session.commit()
     return jsonify("Delete Successful"), 200
 
 
 @app.route('/analytics/', methods=['GET'])
-def getAll():
+def get_all():
     """Get a list of URLs and their usage count in descending order
 
     Parameters
@@ -194,13 +194,13 @@ def getAll():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    all = ShortURL.query.all()
-    ret = ShortURL.serializeList(all)
+    select_all = ShortURL.query.all()
+    ret = ShortURL.serialize_list(select_all)
     return jsonify(ret), 200
 
 
 @app.route('/analytics/popular', methods=['GET'])
-def getPopular():
+def get_popular():
     """Get a list of URLs and their usage count in descending order
 
     Parameters
@@ -211,15 +211,15 @@ def getPopular():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    usageData = ShortURL.query.order_by(ShortURL.usageCount.desc()).all()
+    data = ShortURL.query.order_by(ShortURL.usageCount.desc()).all()
     ret = []
-    for ud in usageData:
-        ret.append({"url": ud.URL, "shortLink": ud.shortLink, "usageCount": ud.usageCount})
+    for d in data:
+        ret.append({"url": d.url, "short_link": d.short_link, "usage_count": d.usage_count})
     return jsonify(ret), 200
 
 
 @app.route('/analytics/recent', methods=['GET'])
-def getRecent():
+def get_recent():
     """Get a list of URLs and their usage count, and last clicked date
 
     Parameters
@@ -230,9 +230,9 @@ def getRecent():
     result: `string`
         The result of deleting the shortlink. Returns "NOT FOUND" if the provided shortlink does not exist
     """
-    usageData = ShortURL.query.order_by(ShortURL.lastUsed.desc()).all()
+    data = ShortURL.query.order_by(ShortURL.last_used.desc()).all()
     ret = []
-    for ud in usageData:
-        ret.append({"url": ud.URL, "shortLink": ud.shortLink, "lastUsed": ud.lastUsed})
+    for d in data:
+        ret.append({"url": d.url, "short_link": d.short_link, "last_used": d.last_used})
     return jsonify(ret), 200
 

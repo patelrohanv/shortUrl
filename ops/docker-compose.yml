@@ -2,6 +2,7 @@ version: "3.9"  # optional since v1.27.0
 services:
   db:
     container_name: postgres
+    restart: on-failure
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -14,6 +15,7 @@ services:
 
   api:
     container_name: shortUrl-web
+    restart: on-failure
     environment:
       - FLASK_HOST=${FLASK_HOST}
       - FLASK_PORT=${FLASK_PORT}
@@ -22,13 +24,12 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_HOST=database
       - POSTGRES_PORT=${POSTGRES_PORT}
     build:
       context: ..
-      network: host
       dockerfile: ops\Dockerfile.flask
     ports:
       - ${FLASK_PORT}:${FLASK_PORT}
     links:
-      - "db:${POSTGRES_HOST}"
+      - "db:database"
