@@ -82,18 +82,20 @@ Windows:
 
 In a terminal window, run the following from the root dir of the project
 ```
-ops\shortUrl.bat
-docker-compose -f ops\docker-compose.yml build
-docker-compose -f ops\docker-compose.yml up
+cd ops
+shortUrl.bat
+docker-compose build
+docker-compose up
 ``` 
 
 Mac/Linux:
 
 In a terminal window, run the following from the root dir of the project
 ```
-source ops/shortUrl.env
-docker-compose -f ops/docker-compose.yml build
-docker-compose -f ops/docker-compose.yml up
+cd ops
+source shortUrl.env
+docker-compose build
+docker-compose up
 ```
 
 ## Running tests locally
