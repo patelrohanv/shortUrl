@@ -1,18 +1,22 @@
-from app import app, db
-from app.models import ShortURL
+from database import db_session
+from models import ShortURL
 
-from flask import request, jsonify
+from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from datetime import datetime
 import shortuuid
 
 
-@app.route("/ping")
+short = Blueprint("short", __name__)
+db = db_session()
+
+
+@short.route("/ping")
 def ping():
     return "<p>Ping!</p>"
 
 
-@app.route('/generateShortLink', methods=['POST'])
+@short.route('/generateShortLink', methods=['POST'])
 def generate_short_link():
     """Generate a shortlink for a url
 
@@ -38,7 +42,6 @@ def generate_short_link():
         try:
             expiration_date = datetime.strptime(data['expiration_date'], "%m/%d/%Y")
         except ValueError as ve:
-            app.logger.info(ve)
             return jsonify(str(ve)), 400
     else:
         expiration_date = None
@@ -51,16 +54,16 @@ def generate_short_link():
             short_link=short_link,
             expiration_date=expiration_date
         )
-        db.session.add(entry)
-        db.session.commit()
+        current_session = db.object_session(entry)
+        current_session.add(entry)
+        current_session.commit()
         ret = entry.serialize()
         return jsonify(ret), 200
     except IntegrityError as ie:
-        app.logger.info(ie)
         return jsonify(f'Key {url} already exists'), 400
 
 
-@app.route('/<short_link>', methods=['GET'])
+@short.route('/<short_link>', methods=['GET'])
 def find_url_from_short_link(short_link):
     """Find a shortlink for a url
 
@@ -83,20 +86,22 @@ def find_url_from_short_link(short_link):
 
     if entry.expiration_date is not None:
         if entry.expiration_date < datetime.now():
-            db.session.delete(entry)
-            db.session.commit()
+            current_session = db.object_session(entry)
+            current_session.delete(entry)
+            current_session.commit()
             return jsonify('shortLink expired; please recreate'), 400
 
     # Update the usageCount and lastUsed
     entry.usage_count += 1;
     entry.last_used = datetime.now()
-    db.session.add(entry)
-    db.session.commit()
+    current_session = db.object_session(entry)
+    current_session.add(entry)
+    current_session.commit()
     ret = entry.serialize()
     return jsonify(ret), 200
 
 
-@app.route('/delete/url', methods=['DELETE'])
+@short.route('/delete/url', methods=['DELETE'])
 def delete_url():
     """Delete a URL
 
@@ -118,15 +123,15 @@ def delete_url():
 
     try:
         entry = ShortURL.query.filter_by(url=url).one()
-        db.session.delete(entry)
-        db.session.commit()
+        current_session = db.object_session(entry)
+        current_session.delete(entry)
+        current_session.commit()
         return jsonify("Delete Successful"), 200
-    except NoResultFound as nrf:
-        app.logger.info(nrf)
+    except NoResultFound:
         return jsonify("url not found"), 400
 
 
-@app.route('/delete/shortLink', methods=['DELETE'])
+@short.route('/delete/shortLink', methods=['DELETE'])
 def delete_short_link():
     """Delete a URL
 
@@ -148,15 +153,15 @@ def delete_short_link():
 
     try:
         entry = ShortURL.query.filter_by(short_link=short_link).one()
-        db.session.delete(entry)
-        db.session.commit()
+        current_session = db.object_session(entry)
+        current_session.delete(entry)
+        current_session.commit()
         return jsonify("Delete Successful"), 200
-    except NoResultFound as nrf:
-        app.logger.info(nrf)
+    except NoResultFound:
         return jsonify("shortLink not found"), 400
 
 
-@app.route('/delete/expired', methods=['DELETE'])
+@short.route('/delete/expired', methods=['DELETE'])
 def delete_expired():
     """Delete a URL
 
@@ -177,12 +182,13 @@ def delete_expired():
         if entry.expiration_date is None:
             continue
         if entry.expiration_date <= datetime.now():
-            db.session.delete(entry)
-            db.session.commit()
+            current_session = db.object_session(entry)
+            current_session.delete(entry)
+            current_session.commit()
     return jsonify("Delete Successful"), 200
 
 
-@app.route('/analytics/', methods=['GET'])
+@short.route('/analytics/', methods=['GET'])
 def get_all():
     """Get a list of URLs and their usage count in descending order
 
@@ -199,7 +205,7 @@ def get_all():
     return jsonify(ret), 200
 
 
-@app.route('/analytics/popular', methods=['GET'])
+@short.route('/analytics/popular', methods=['GET'])
 def get_popular():
     """Get a list of URLs and their usage count in descending order
 
@@ -218,7 +224,7 @@ def get_popular():
     return jsonify(ret), 200
 
 
-@app.route('/analytics/recent', methods=['GET'])
+@short.route('/analytics/recent', methods=['GET'])
 def get_recent():
     """Get a list of URLs and their usage count, and last clicked date
 

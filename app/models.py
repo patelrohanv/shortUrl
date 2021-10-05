@@ -1,15 +1,17 @@
-from app import db
+from sqlalchemy import Table, Column, Integer, String, DateTime
+from sqlalchemy.orm import mapper
+from database import metadata, db_session
 
 
-class ShortURL(db.Model):
-    __tablename__ = 'short_url'
+class ShortURL(object):
+    query = db_session.query_property()
 
-    id = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(80), unique=True, nullable=False)
-    short_link = db.Column(db.String, nullable=False)
-    expiration_date = db.Column(db.DateTime, nullable=True)
-    usage_count = db.Column(db.Integer, nullable=False, default=0)
-    last_used = db.Column(db.DateTime, nullable=True)
+    id = Column(Integer, primary_key=True)
+    url = Column(String(80), unique=True, nullable=False)
+    short_link = Column(String, nullable=False)
+    expiration_date = Column(DateTime, nullable=True)
+    usage_count = Column(Integer, nullable=False, default=0)
+    last_used = Column(DateTime, nullable=True)
 
     def __init__(self, url, short_link, expiration_date=None):
         self.url = url
@@ -27,9 +29,9 @@ class ShortURL(db.Model):
         }
 
     @staticmethod
-    def serialize_list(short_urls):
+    def serialize_list(urls_data):
         serialized = []
-        for ud in short_urls:
+        for ud in urls_data:
             formatted = ud.serialize()
             serialized.append(formatted)
         return serialized
@@ -38,3 +40,14 @@ class ShortURL(db.Model):
         return \
             f'<ShortURL \
             {self.id} {self.url} {self.short_link} {self.expiration_date} {self.usage_count} {self.last_used}>'
+
+
+short_urls = Table('short_urls', metadata,
+                   Column('id', Integer, primary_key=True),
+                   Column('url', String(80), unique=True, nullable=False),
+                   Column('short_link', String, nullable=False),
+                   Column('expiration_date', DateTime, nullable=True),
+                   Column('usage_count', Integer, nullable=False, default=0),
+                   Column('last_used', DateTime, nullable=True)
+                   )
+mapper(ShortURL, short_urls)
