@@ -1,11 +1,9 @@
-from sqlalchemy import Table, Column, Integer, String, DateTime
-from sqlalchemy.orm import mapper
-from database import metadata, db_session
+from sqlalchemy import Column, Integer, String, DateTime
+from database import Base
 
 
-class ShortURL(object):
-    query = db_session.query_property()
-
+class ShortURL(Base):
+    __tablename__ = 'short_urls'
     id = Column(Integer, primary_key=True)
     url = Column(String(80), unique=True, nullable=False)
     short_link = Column(String, nullable=False)
@@ -40,14 +38,3 @@ class ShortURL(object):
         return \
             f'<ShortURL \
             {self.id} {self.url} {self.short_link} {self.expiration_date} {self.usage_count} {self.last_used}>'
-
-
-short_urls = Table('short_urls', metadata,
-                   Column('id', Integer, primary_key=True),
-                   Column('url', String(80), unique=True, nullable=False),
-                   Column('short_link', String, nullable=False),
-                   Column('expiration_date', DateTime, nullable=True),
-                   Column('usage_count', Integer, nullable=False, default=0),
-                   Column('last_used', DateTime, nullable=True)
-                   )
-mapper(ShortURL, short_urls)

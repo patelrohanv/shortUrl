@@ -54,9 +54,8 @@ def generate_short_link():
             short_link=short_link,
             expiration_date=expiration_date
         )
-        current_session = db.object_session(entry)
-        current_session.add(entry)
-        current_session.commit()
+        db.add(entry)
+        db.commit()
         ret = entry.serialize()
         return jsonify(ret), 200
     except IntegrityError as ie:
@@ -86,17 +85,15 @@ def find_url_from_short_link(short_link):
 
     if entry.expiration_date is not None:
         if entry.expiration_date < datetime.now():
-            current_session = db.object_session(entry)
-            current_session.delete(entry)
-            current_session.commit()
+            db.delete(entry)
+            db.commit()
             return jsonify('shortLink expired; please recreate'), 400
 
     # Update the usageCount and lastUsed
     entry.usage_count += 1;
     entry.last_used = datetime.now()
-    current_session = db.object_session(entry)
-    current_session.add(entry)
-    current_session.commit()
+    db.add(entry)
+    db.commit()
     ret = entry.serialize()
     return jsonify(ret), 200
 
@@ -123,9 +120,8 @@ def delete_url():
 
     try:
         entry = ShortURL.query.filter_by(url=url).one()
-        current_session = db.object_session(entry)
-        current_session.delete(entry)
-        current_session.commit()
+        db.delete(entry)
+        db.commit()
         return jsonify("Delete Successful"), 200
     except NoResultFound:
         return jsonify("url not found"), 400
@@ -153,9 +149,8 @@ def delete_short_link():
 
     try:
         entry = ShortURL.query.filter_by(short_link=short_link).one()
-        current_session = db.object_session(entry)
-        current_session.delete(entry)
-        current_session.commit()
+        db.delete(entry)
+        db.commit()
         return jsonify("Delete Successful"), 200
     except NoResultFound:
         return jsonify("shortLink not found"), 400
@@ -182,9 +177,8 @@ def delete_expired():
         if entry.expiration_date is None:
             continue
         if entry.expiration_date <= datetime.now():
-            current_session = db.object_session(entry)
-            current_session.delete(entry)
-            current_session.commit()
+            db.delete(entry)
+            db.commit()
     return jsonify("Delete Successful"), 200
 
 
