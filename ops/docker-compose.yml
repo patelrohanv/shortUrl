@@ -13,7 +13,7 @@ services:
     restart: on-failure
     environment:
       FLASK_HOST: 0.0.0.0
-      FLASK_PORT: 8000
+      FLASK_PORT: 5000
       FLASK_APP: shortner
       FLASK_ENV: development
       POSTGRES_USER: postgres
@@ -27,7 +27,7 @@ services:
       context: ..
       dockerfile: ops/Dockerfile.flask
     ports:
-      - "8000:8000"
+      - "5000:5000"
     networks:
       - flasknetwork
     depends_on:

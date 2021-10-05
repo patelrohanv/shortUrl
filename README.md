@@ -77,21 +77,6 @@ docker run --rm -d \
 flask run
 ```
 
-## Running API in Docker
-Windows:
-
-In a terminal window, run the following from the root dir of the project
-```
-ops\runApp.sh
-``` 
-
-Mac/Linux:
-
-In a terminal window, run the following from the root dir of the project
-```
-ops/runApp.sh
-```
-
 ## Running API using Docker Compose
 Windows:
 
