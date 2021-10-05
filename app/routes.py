@@ -8,7 +8,6 @@ import shortuuid
 
 
 short = Blueprint("short", __name__)
-db = db_session()
 
 
 @short.route("/ping")
@@ -54,8 +53,8 @@ def generate_short_link():
             short_link=short_link,
             expiration_date=expiration_date
         )
-        db.add(entry)
-        db.commit()
+        db_session.add(entry)
+        db_session.commit()
         ret = entry.serialize()
         return jsonify(ret), 200
     except IntegrityError as ie:
@@ -85,15 +84,15 @@ def find_url_from_short_link(short_link):
 
     if entry.expiration_date is not None:
         if entry.expiration_date < datetime.now():
-            db.delete(entry)
-            db.commit()
+            db_session.delete(entry)
+            db_session.commit()
             return jsonify('shortLink expired; please recreate'), 400
 
     # Update the usageCount and lastUsed
     entry.usage_count += 1;
     entry.last_used = datetime.now()
-    db.add(entry)
-    db.commit()
+    db_session.add(entry)
+    db_session.commit()
     ret = entry.serialize()
     return jsonify(ret), 200
 
@@ -120,8 +119,8 @@ def delete_url():
 
     try:
         entry = ShortURL.query.filter_by(url=url).one()
-        db.delete(entry)
-        db.commit()
+        db_session.delete(entry)
+        db_session.commit()
         return jsonify("Delete Successful"), 200
     except NoResultFound:
         return jsonify("url not found"), 400
@@ -149,8 +148,8 @@ def delete_short_link():
 
     try:
         entry = ShortURL.query.filter_by(short_link=short_link).one()
-        db.delete(entry)
-        db.commit()
+        db_session.delete(entry)
+        db_session.commit()
         return jsonify("Delete Successful"), 200
     except NoResultFound:
         return jsonify("shortLink not found"), 400
@@ -177,8 +176,8 @@ def delete_expired():
         if entry.expiration_date is None:
             continue
         if entry.expiration_date <= datetime.now():
-            db.delete(entry)
-            db.commit()
+            db_session.delete(entry)
+            db_session.commit()
     return jsonify("Delete Successful"), 200
 
 
