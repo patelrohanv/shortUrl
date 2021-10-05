@@ -1,35 +1,37 @@
 version: "3.9"  # optional since v1.27.0
 services:
   db:
-    container_name: postgres
-    restart: on-failure
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_PORT=${POSTGRES_PORT}
+      POSTGRES_PASSWORD: UrlSh0rtn3r
+      POSTGRES_DB: url_shortner
+      POSTGRES_PORT: 5432
     image: postgres:latest
-    ports:
-      - ${POSTGRES_PORT}:${POSTGRES_PORT}
-
+    networks:
+      - flasknetwork
   api:
     container_name: shortUrl-web
     restart: on-failure
     environment:
-      - FLASK_HOST=${FLASK_HOST}
-      - FLASK_PORT=${FLASK_PORT}
-      - FLASK_APP=${FLASK_APP}
-      - FLASK_ENV=${FLASK_ENV}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_HOST=database
-      - POSTGRES_PORT=${POSTGRES_PORT}
+      FLASK_HOST: 0.0.0.0
+      FLASK_PORT: 8000
+      FLASK_APP: shortner
+      FLASK_ENV: development
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: UrlSh0rtn3r
+      POSTGRES_DB: url_shortner
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+    volumes:
+      - ../app:/app
     build:
       context: ..
-      dockerfile: ops\Dockerfile.flask
+      dockerfile: ops/Dockerfile.flask
     ports:
-      - ${FLASK_PORT}:${FLASK_PORT}
-    links:
-      - "db:database"
+      - "8000:8000"
+    networks:
+      - flasknetwork
+    depends_on:
+      - db
+networks:
+  flasknetwork:
+      driver: bridge
